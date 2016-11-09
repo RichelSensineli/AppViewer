@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" content="chrome=1, IE=edge" http-equiv="X-UA-Compatible" />
+	  
+		<title>WWT Web Client Click Event</title>
+		<script src="http://www.worldwidetelescope.org/scripts/wwtsdk.aspx"></script>	
+		<script>
+
+		// Create the WorldWide telescope object variable
+		var wwt;
+
+		// Create variables to hold the changeable settings
+		var bShowCrosshairs = true;
+		var bShowUI = true;
+		var bShowFigures = true;
+		var bShowCircles = false;
+		var bShowAlerts = false;
+
+		// This function initializes the wwt object and registers the wwtReady event
+		// once the initialization is done the wwtReady event will be fired
+		function initialize() {
+			var x = 286.485;
+			var y = 27.5231666666667;
+			var z = 60;
+			
+			wwt = wwtlib.WWTControl.initControl("WWTCanvas");
+			wwt.add_ready(wwtReady);
+			wwt.add_clicked(wwtClick);
+			
+			wwt.gotoRaDecZoom(x, y, z, true);
+
+			if (window.DeviceOrientationEvent) {
+				window.addEventListener("deviceorientation", function(event) 
+				{
+					//x = x + ((Math.round(event.alpha)) / 360);
+					//y = y + ((Math.round(event.beta)) / 100);
+					//z = z + (Math.round(event.gamma));
+					x = 4.485;
+					x = x + Math.round(event.alpha);
+					
+					y = 2.485;
+					y = y + Math.round(event.beta);
+						
+					//z = 1.485;
+					//z = z + Math.round(event.gamma);
+					
+					document.getElementById("a").innerHTML = x;
+					document.getElementById("b").innerHTML = y;
+					document.getElementById("g").innerHTML = z;						
+					wwt.gotoRaDecZoom(x, y, z, true);
+					}, true);
+			} else {
+				alert("Sorry, your browser doesn't support Device Orientation");
+			}
+		}
+
+		// A simple function to toggle the settings
+		// This function is called from the checkbox entries setup in the html table
+		function toggleSetting(text) {
+			switch (text) {
+				case 'ShowUI':
+					bShowUI = !bShowUI;
+					wwt.hideUI(!bShowUI);
+					break;
+
+				case 'ShowCrosshairs':
+					bShowCrosshairs = !bShowCrosshairs;
+					wwt.settings.set_showCrosshairs(bShowCrosshairs);
+					break;
+
+				case 'ShowFigures':
+					bShowFigures = !bShowFigures;
+					wwt.settings.set_showConstellationFigures(bShowFigures);
+					break;
+
+				case 'ShowCircles':
+					bShowCircles = !bShowCircles;
+					break;
+
+				case 'ShowAlerts':
+					bShowAlerts = !bShowAlerts;
+					break;
+			}
+		}
+
+		// A function to change the view to different constellations
+		// This function is called from the button entries in the html table
+		function GotoConstellation(text) {    
+			switch (text) {
+				case 'Sagittarius':
+					wwt.gotoRaDecZoom(286.485, -27.5231666666667, 60, false);
+					break;
+
+				case 'Aquarius':
+					wwt.gotoRaDecZoom(334.345, -9.21083333333333, 60, false);
+					break;
+
+				case 'Camelopardalis':
+					wwt.gotoRaDecZoom(90.0, 72.000, 100, false);
+					break;
+
+				case 'Vulpecula':
+					wwt.gotoRaDecZoom(303.47, 24.4426666666667, 100, false);
+					break; 
+			}
+		}
+		
+		// A function to create a circle, and return a reference to the circle
+		var circleCount = 0;
+		function createWWTCircle(fill, lineColor, fillColor, lineWidth, opacity, radius, skyRelative, ra, dec) {
+			var circle = wwt.createCircle(fill);
+			circleCount++;
+			circle.set_id("Circle" + circleCount.toString());
+			circle.set_lineColor(lineColor);
+			circle.set_fillColor(fillColor);
+			circle.set_lineWidth(lineWidth);
+			circle.set_opacity(opacity);
+			circle.set_radius(radius);
+			circle.set_skyRelative(skyRelative);
+			circle.setCenter(ra, dec);
+		
+			return circle;
+		}
+
+		// Simple function to clear all the annotations from the view
+		function clearAnnotations() {
+			wwt.clearAnnotations();
+		}
+
+		// Function that responds to the mouse click event
+		function wwtClick(obj, eventArgs) {
+			if (bShowCircles) {
+				var circle1 = createWWTCircle(false, "green", "", 4, 1.0, 10, false, eventArgs.get_RA(), eventArgs.get_dec());
+				wwt.addAnnotation(circle1);
+			}
+			if (bShowAlerts){
+				alert("Click at RA:" + eventArgs.get_RA().toString() + ", Dec:" + eventArgs.get_dec().toString());
+			}
+			document.getElementById("demo").innerHTML = eventArgs.get_RA().toString();
+		}
+
+		// The wwtReady function is called by the WWT Web Control software
+		// This function sets up the wwt object, and the initial defaults
+		function wwtReady() {
+			wwt.settings.set_showCrosshairs(bShowCrosshairs);
+			wwt.settings.set_showConstellationFigures(bShowFigures);
+			wwt.hideUI(!bShowUI);
+
+			wwt.settings.set_showConstellationBoundries(true);	
+		}
+
+		var b1 = document.getElementById('b1'), b2 = document.getElementById('b2');
+		var x = "Hello!";
+		function showX() {
+			alert(x);
+		}
+		b1.onclick = function() {
+			x = "button one";
+			showX();
+		};
+		b2.onclick = function() {
+			x = "button two";
+			showX();
+			};
+			
+			
+			
+			
+		var clicks = 0;
+        function updateClickCount() {
+            document.getElementById("clickCount").innerHTML = clicks;
+			
+			z = z+5;
+			
+			document.getElementById("gamma").innerHTML = x;
+        }
+		
+		</script>
+	</head>
+
+	<body onload="initialize()" >
+		<table border="0" bgcolor="black">
+			<tr>
+				<td>
+					<div id="WorldWideTelescopeControlHost">
+						<div id="WWTCanvas" style="width: 750px; height: 750px; border-style: none; border-width: 0px;"></div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<tr>
+			<p id="alpha">ra = <b id="a"></b></p>
+			<p id="beta">dec = <b id="b"></b></p>
+			<p id="gamma">fov = <b id="g"></b></p>
+		</tr>
+
+	</body>
+</html>

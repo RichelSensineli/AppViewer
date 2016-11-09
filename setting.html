@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" content="chrome=1, IE=edge" http-equiv="X-UA-Compatible" />
+    	<title>WWT Web Client Click Event</title>
+
+    	
+	</head>
+
+	<script language="javascript">
+		function altera() {
+  			document.getElementById("pokemon").innerHTML="Seu texto";
+		}
+
+		function initialize() {
+			var x = 1.485;
+			var y = -27.5231666666667;
+			var z = 60;
+
+			var a = 272;
+			var b = -24;
+			var checka = false;
+			var checkb = false;
+
+			if (window.DeviceOrientationEvent) {
+					window.addEventListener("deviceorientation", function(event) {
+						x = 0;
+						y = 0;
+						x = x + Math.round(event.alpha);
+						x = x + Math.round(event.gamma);
+						y = y + Math.round(event.beta);
+						document.getElementById("a").innerHTML = x;
+						document.getElementById("b").innerHTML = y;
+						document.getElementById("g").innerHTML = z;						
+					
+						if(x < a){
+							checka = false;
+							document.getElementById("esquerdadireita").innerHTML="Mova para a esquerda";
+						}
+						if (x > a){
+							checka = false;
+							document.getElementById("esquerdadireita").innerHTML="Mova para a direita";
+						}
+						if(x > a && x<a+10){
+							checka  = true;
+							document.getElementById("esquerdadireita").innerHTML="Aguarde";
+						}
+
+
+						if(y < b){
+							checkb = false;
+							document.getElementById("cimabaixo").innerHTML="Mova para cima";
+						}
+						if (y > b){
+							checkb  = false;
+							document.getElementById("cimabaixo").innerHTML="Mova para baixo";
+						}
+						if(y > b && y<b+10){
+							checkb  = true;
+							document.getElementById("cimabaixo").innerHTML="Aguarde";
+						}
+
+						if(checka && checkb){
+							window.location.replace("file:///C:/Users/Cenci91/Documents/Mackenzie/2016/TCC/Page/PAGE.html");	
+						}
+
+					}, true);
+
+					
+			} else {
+				alert("Sorry, your browser doesn't support Device Orientation");
+			}
+		}
+		
+	</script>
+
+	<body onload="initialize()">
+		<div id="esquerdadireita">Horizontal</div>
+		<div id="cimabaixo">Vertical</div>
+
+		<p id="alpha">ra = <b id="a"></b></p>
+		<p id="beta">dec = <b id="b"></b></p>
+		<p id="gamma">fov = <b id="g"></b></p>
+	</body>
+</html>
